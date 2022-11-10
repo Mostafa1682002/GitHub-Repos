@@ -1,35 +1,31 @@
 //Main Variables
 let input=document.getElementById("github");
+let form=document.querySelector('form');
 let button=document.querySelector(".btn");
 let showData=document.querySelector(".show-data");
-
-button.addEventListener("click",(e)=>e.preventDefault())
-
 window.onload=function(){
     input.focus();
 }
 
-
-
-
-button.onclick=function(){
+form.addEventListener("submit",(e)=>{
+    e.preventDefault();
     getRepose();
-}
+
+})
 
 
 
 //getRepose Function
 function getRepose(){
     if(input.value ==""){
-        showData.innerHTML=`<span>Please Write Github Username</span>`;
+        showData.innerHTML=`<p class='mssg'>Please Write Github Username</p>`;
     }else{
-        fetch(`https://api.github.com/users/${input.value}/repos`).then(
-            (result)=>{
-                return result.json();
-            }
-        ).then(
+        fetch(`https://api.github.com/users/${input.value}/repos`)
+        .then((result)=>result.json())
+        .then(
             (data)=>{
-                showData.innerHTML="";
+                // showData.innerHTML="";
+                showData.innerHTML=`<p class='mssg r'>Repos from ${input.value}</p>`
                 for(let x=0;x<data.length;x++){
                     let divRepo=document.createElement("div");
                     divRepo.className="repose";
@@ -60,6 +56,10 @@ function getRepose(){
                     showData.appendChild(divRepo);
                 }
                 console.log(data);
+                if(data.message=='Not Found'){
+                    showData.innerHTML=`<p class='mssg'>${input.value} is Not Found </p>`;
+                }
+                input.value ="";
             }
         )
     }
